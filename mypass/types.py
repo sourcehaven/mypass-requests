@@ -7,3 +7,5 @@ class MyPassConfig:
     host: Optional[str] = None
     port: Optional[int] = None
     session: Optional[Mapping] = None
+    signin: callable = None
+    logout: callable = None
