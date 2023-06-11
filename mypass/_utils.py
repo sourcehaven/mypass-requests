@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from functools import wraps
 
 from .app import current_app
@@ -55,5 +57,27 @@ def bind_app_config(needs_session: bool = False):
             if auth_token is None:
                 return f(*args, **kwargs, host=host, port=port)
             return f(*args, **kwargs, host=host, port=port, auth_token=auth_token)
+
         return wrapper_func
+
     return decorator
+
+
+def bind_error_handlers(f):
+    @wraps(f)
+    def wrapper_func(*args, **kwargs):
+        # in case no application is configured, the original wrapped function will be called
+        try:
+            # get error handlers
+            error_handlers = current_app().error_handlers
+            # try running the function
+            try:
+                return f(*args, **kwargs)
+            # can we handle any of these errors?
+            except tuple(error_handlers.keys()) as e:
+                handler = error_handlers[type(e)]
+                return handler(f, e, *args, **kwargs)
+        except ValueError:
+            return f(*args, **kwargs)
+
+    return wrapper_func

@@ -1,13 +1,25 @@
+import logging
 from pathlib import Path
 
 import requests
 
 from mypass import MyPassRequests, crypto, db
+from mypass.exceptions import MyPassRequestException
+
+
+def mypass_request_exception_handler(f, e, *args, **kwargs):
+    response = requests.post('http://localhost:5757/api/auth/login', json={'pw': 'my-super-secret'})
+    app.config.session = response.json()
+    print('Logging in again ...')
+    kwargs.pop('auth_token', None)
+    return f(*args, **kwargs)
+
 
 if __name__ == '__main__':
     app = MyPassRequests()
     app.config.host = 'http://localhost'
     app.config.port = 5757
+    app.register_error_handler(MyPassRequestException, mypass_request_exception_handler)
 
     resp = requests.post('http://localhost:5757/api/auth/login', json={'pw': 'my-super-secret'})
     if resp.status_code == 201:

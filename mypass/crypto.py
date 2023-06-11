@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import requests
 
-from ._utils import gen_proxy_from_port, bind_app_config
+from ._utils import gen_proxy_from_port, bind_app_config, bind_error_handlers
 from .exceptions import MyPassRequestException
 
 
+@bind_error_handlers
 @bind_app_config()
 def encrypt(secret: str, pw: str, host: str = None, port: int = None):
     proxies = gen_proxy_from_port(host, port)
@@ -17,6 +18,7 @@ def encrypt(secret: str, pw: str, host: str = None, port: int = None):
     raise MyPassRequestException(resp.status_code, son)
 
 
+@bind_error_handlers
 @bind_app_config()
 def decrypt(secret: str, pw: str, salt: str, host: str = None, port: int = None):
     proxies = gen_proxy_from_port(host, port)

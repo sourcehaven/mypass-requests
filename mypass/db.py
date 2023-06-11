@@ -5,10 +5,11 @@ import logging
 import requests
 
 from . import current_app
-from ._utils import bind_app_config, gen_proxy_from_port
+from ._utils import bind_app_config, bind_error_handlers, gen_proxy_from_port
 from .exceptions import MyPassRequestException
 
 
+@bind_error_handlers
 @bind_app_config()
 def create_master_pw_with_login(pw: str, host: str = None, port: int = None) -> int:
     url = f'{host}/api/db/master/create'
@@ -23,6 +24,7 @@ def create_master_pw_with_login(pw: str, host: str = None, port: int = None) -> 
     raise MyPassRequestException(resp.status_code, resp.json())
 
 
+@bind_error_handlers
 @bind_app_config(needs_session=True)
 def create_master_pw(pw: str, host: str = None, port: int = None, auth_token: str = None) -> int:
     url = f'{host}/api/db/master/create'
@@ -35,6 +37,7 @@ def create_master_pw(pw: str, host: str = None, port: int = None, auth_token: st
     raise MyPassRequestException(resp.status_code, resp.json())
 
 
+@bind_error_handlers
 @bind_app_config(needs_session=True)
 def query_master_pw(host: str = None, port: int = None, auth_token: str = None) -> str:
     url = f'{host}/api/db/master/read'
@@ -46,6 +49,7 @@ def query_master_pw(host: str = None, port: int = None, auth_token: str = None) 
     raise MyPassRequestException(resp.status_code, resp.json())
 
 
+@bind_error_handlers
 @bind_app_config(needs_session=True)
 def update_master_pw(pw: str, host: str = None, port: int = None, auth_token: str = None):
     url = f'{host}/api/db/master/update'
