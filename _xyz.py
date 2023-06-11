@@ -9,7 +9,7 @@ if __name__ == '__main__':
     app.config.host = 'http://localhost'
     app.config.port = 5757
 
-    resp = requests.post('http://localhost:5757/api/auth/signin', json={'pw': 'my-super-secret'})
+    resp = requests.post('http://localhost:5757/api/auth/login', json={'pw': 'my-super-secret'})
     if resp.status_code == 201:
         access_token = resp.json()['access_token']
         refresh_token = resp.json()['refresh_token']
